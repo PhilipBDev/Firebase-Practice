@@ -1,8 +1,57 @@
 import Head from 'next/head';
 import Image from 'next/image';
 import styles from '../styles/Home.module.css';
+import { useState } from 'react';
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  onAuthStateChanged,
+  signOut,
+} from 'firebase/auth';
+import { auth } from '../firebaseConfig';
 
 export default function Home() {
+  const [registerEmail, setRegisterEmail] = useState('');
+  const [registerPassword, setRegisterPassword] = useState('');
+  const [loginEmail, setLoginEmail] = useState('');
+  const [loginPassword, setLoginPassword] = useState('');
+
+  const [user, setUser] = useState({});
+
+  onAuthStateChanged(auth, (currentUser) => {
+    setUser(currentUser);
+  });
+
+  const register = async () => {
+    try {
+      const user = await createUserWithEmailAndPassword(
+        auth,
+        registerEmail,
+        registerPassword
+      );
+      console.log(user);
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
+  const login = async () => {
+    try {
+      const user = await signInWithEmailAndPassword(
+        auth,
+        loginEmail,
+        loginPassword
+      );
+      console.log(user);
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
+  const logout = async () => {
+    await signOut(auth);
+  };
+
   return (
     <div className={styles.container}>
       <Head>
@@ -18,6 +67,69 @@ export default function Home() {
           This app is currently in progress. Expected to be open source by
           3/1/22.
         </p>
+        <div className={styles.description}>
+          <h2 className="font-bold underline mb-2">
+            Firebase User Authentication Test Forms
+          </h2>
+          <div>
+            <h3 className="font-bold mb-2"> Register User </h3>
+            <input
+              className="border border-solid border-black p-1"
+              placeholder="Email..."
+              onChange={(event) => {
+                setRegisterEmail(event.target.value);
+              }}
+            />
+            <input
+              placeholder="Password..."
+              className="border border-solid border-black p-1 ml-1"
+              onChange={(event) => {
+                setRegisterPassword(event.target.value);
+              }}
+            />
+
+            <button
+              className="border border-solid border-black p-1 ml-2 mb-2"
+              onClick={register}
+            >
+              Create User
+            </button>
+          </div>
+
+          <div>
+            <h3 className="font-bold mb-1">Login</h3>
+            <input
+              className="border border-solid border-black p-1"
+              placeholder="Email..."
+              onChange={(event) => {
+                setLoginEmail(event.target.value);
+              }}
+            />
+            <input
+              className="border border-solid border-black p-1 ml-1"
+              placeholder="Password..."
+              onChange={(event) => {
+                setLoginPassword(event.target.value);
+              }}
+            />
+
+            <button
+              className="border border-solid border-black p-1 ml-2"
+              onClick={login}
+            >
+              {' '}
+              Login
+            </button>
+          </div>
+
+          <h4 className="bg-green-500 mt-2"> User Logged In: </h4>
+          {user?.email}
+
+          <button className="border border-zinc-900 p-2 mt-2" onClick={logout}>
+            {' '}
+            Sign Out{' '}
+          </button>
+        </div>
       </main>
 
       <footer className={styles.footer}>
