@@ -1,3 +1,3 @@
-## Friendly Reminders
+## Firebase
 
-This project was built with the intention of making it open source friendly. It will be built using Next.js, Tailwind, and Firebase.
+Learning how to use Firebase. Basic login functionality.
